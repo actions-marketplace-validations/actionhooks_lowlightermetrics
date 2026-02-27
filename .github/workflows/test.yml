@@ -2,7 +2,7 @@ name: Build, test and analyze
 
 on:
   pull_request:
-    branches: [ master ]
+    branches: [ main ]
   workflow_call:
   workflow_dispatch:
 
@@ -41,11 +41,11 @@ jobs:
           npm install -g dprint
           mkdir -v -p /home/runner/.cache/dprint/cache
           npx dprint fmt --config .github/config/dprint.json
-      - name: Build actionhooks/lowlightermetrics:${{ github.head_ref || 'master' }}
+      - name: Build actionhooks/lowlightermetrics:${{ github.head_ref || 'main' }}
         env:
-          GIT_REF: ${{ github.head_ref || 'master' }}
+          GIT_REF: ${{ github.head_ref || 'main' }}
         run: docker build -t actionhooks/lowlightermetrics:$(echo $GIT_REF | sed 's/[^a-z]/-/g') .
       - name: Run tests
         env:
-          GIT_REF: ${{ github.head_ref || 'master' }}
+          GIT_REF: ${{ github.head_ref || 'main' }}
         run: docker run --rm --entrypoint="" actionhooks/lowlightermetrics:$(echo $GIT_REF | sed 's/[^a-z]/-/g') npm run test-metrics
